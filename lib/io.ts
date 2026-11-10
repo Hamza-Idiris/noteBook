@@ -3,7 +3,7 @@ import {db,uid,newNote,Note} from './db';
 const esc=(s:string)=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 export const sanitize=(h:string)=>{const d=new DOMParser().parseFromString(h,'text/html');
   d.querySelectorAll('script,style,iframe,object,embed,link,meta,form').forEach(e=>e.remove());
-  d.body.querySelectorAll('*').forEach(e=>[...e.attributes].forEach(a=>{if(/^on/i.test(a.name)||(/^(href|src)$/i.test(a.name)&&!/^\s*(https?:|mailto:|#)/i.test(a.value)))e.removeAttribute(a.name)}));
+  d.body.querySelectorAll('*').forEach(e=>Array.from(e.attributes).forEach(a=>{if(/^on/i.test(a.name)||(/^(href|src)$/i.test(a.name)&&!/^\s*(https?:|mailto:|#)/i.test(a.value)))e.removeAttribute(a.name)}));
   return d.body.innerHTML};
 export const toText=(h:string)=>new DOMParser().parseFromString(h.replace(/<\/(p|li|h[1-6]|blockquote)>|<br\s*\/?>/g,'$&\n'),'text/html').body.textContent?.trim()??'';
 export const toMd=(h:string)=>h.replace(/<h([1-3])[^>]*>(.*?)<\/h\1>/g,(_,l,t)=>'#'.repeat(+l)+' '+t+'\n\n').replace(/<\/?(strong|b)>/g,'**').replace(/<\/?(em|i)>/g,'*').replace(/<\/?code>/g,'`')
